@@ -17,5 +17,5 @@ jobs:
    deatils:
       runs-on: ubuntu-latest
       steps:
-         -name: show what is the version of apps
-          run: docker --version && python --version
+         - name: show what is the version of apps
+           run: docker --version && python --version
