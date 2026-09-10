@@ -1,29 +1,40 @@
-name: portfolio
+name: Deploy Static Site
 
 on:
   push:
-    branches:
-      - main
-Permissions:
+    branches: [main]
+  workflow_dispatch:  
+
+permissions:
+  contents: read
+  pages: write
   id-token: write
-  pages: write   
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    
     steps:
-        #get the code from the repo
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-        #Setup Github Pages
-      - name: setup Github Pages
-        uses: actions/configure-pages@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v5
 
-        #static files to be deployed
-        - name: Upload static files
-          uses: actions/upload-pages-artifact@v4
-          
-        -name: Deploy to Github Pages
-         uses: actions/deploy-pages@v4
+      - name: Setup GitHub Pages Configuration
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: '.' # Location of your static files
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
